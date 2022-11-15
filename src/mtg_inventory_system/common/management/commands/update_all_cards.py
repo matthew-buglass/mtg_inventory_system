@@ -10,7 +10,7 @@ from ...models import Card
 logger = logging.getLogger(__name__)
 
 
-# V1: basic update and create time for 76,116 cards
+# V1: basic update and create time for 76,116 cards: 10 mins, 58sec
 class Command(BaseCommand):
     help = 'Gets bulk data from Scryfall and updates the Card Database'
 
