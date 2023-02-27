@@ -1,3 +1,5 @@
+import re
+
 import django.db.models
 
 from logging import getLogger
@@ -62,11 +64,14 @@ class CypherSerializerBase:
         return '\n'.join(create_strings_list)
 
     def write_create_all_nodes_string_to_file(self, file_name):
-        with open(file_name, 'w') as f:
-            f.write(self.get_create_all_nodes_string())
-            f.close()
+        if re.match(r'\.cypher?', file_name):
+            with open(file_name, 'w') as f:
+                f.write(self.get_create_all_nodes_string())
+                f.close()
 
-        logger.info(f'Wrote create {self.model_class.__name__} nodes to cypher file {file_name}')
+            logger.info(f'Wrote create {self.model_class.__name__} nodes to cypher file {file_name}')
+        else:
+            logger.error(f'No file writen, invalid file name {file_name}. Files must have a `.cypher` extension')
 
 
 class CardCypherSerializer(CypherSerializerBase):
