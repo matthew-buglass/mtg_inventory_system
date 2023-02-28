@@ -29,6 +29,7 @@ class CypherSerializerBase:
         self.model_class = model_class
         self.fields = ['id'] + custom_fields
         self.node_name_field = node_name_field
+        self.query_set = None
 
     def get_create_node_string(self, node_name: str,  obj: django.db.models.Model, fields: dict):
         return self.create_node_fn(
@@ -55,9 +56,8 @@ class CypherSerializerBase:
 
     def get_create_all_nodes_string(self):
         create_strings_list = []
-        if self.model_class:
-            objects = self.model_class.objects.all()
-            for x in iter(objects):
+        if self.query_set:
+            for x in iter(self.query_set):
                 fields = model_to_dict(x, fields=self.fields)
                 create_strings_list.append(self.get_create_node_string(
                     node_name=str(model_to_dict(x)[self.node_name_field]).replace(' ', '_').lower(),
@@ -82,3 +82,4 @@ class CypherSerializerBase:
 class CardCypherSerializer(CypherSerializerBase):
     def __init__(self):
         super(CardCypherSerializer, self).__init__(model_class=Card, custom_fields=['name', 'collector_number'])
+        self.query_set = Card.objects.all().order_by('name', 'released_at').distinct('name')
