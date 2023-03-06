@@ -16,12 +16,13 @@ class CardNodeConnection(Model):
 
     def cypher_string(self):
         return create_relationship_clause(
-            src_props=,
-            dst_props=,
-            relation_type=,
-            relation_props=
+            src_name=self.src_card.name,
+            src_obj_type=Card.__name__,
+            dst_name=self.dst_card.name,
+            dst_obj_type=Card.__name__,
+            relation_type=str(self.connection_type),
+            relation_props=self.connection_meta_data
         )
-
 
 
 class TempCardNodeConnection(Model):

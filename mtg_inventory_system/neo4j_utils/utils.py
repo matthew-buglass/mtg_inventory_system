@@ -12,10 +12,15 @@ def create_node_clause(node_name: str, label: str, props: dict = None):
 
 
 # Relationship clauses
-def create_relationship_clause(src_props: dict, dst_props: dict, relation_type: str, relation_props: dict = None):
-    """
-    Example:
-        MATCH(a:Card),(b:Card)WHERE a.name = 'Bile Blight' AND b.name = 'Treefolk Seedlings'CREATE (a)-[:TRIGGERS {name: a.name + '->' + b.name}]->(b);
-        MATCH(a:Card),(b:Card)WHERE a.name = 'Treefolk Seedlings' AND b.name = 'Bile Blight'CREATE (a)-[:TRIGGERS {name: a.name + '->' + b.name}]->(b);
-    """
-    return f'CREATE (n:{src_props})-[:{relation_type} {json.dumps(relation_props)}]->({dst_props})'
+def create_relationship_clause(
+        src_name: str,
+        src_obj_type: str,
+        dst_name: str,
+        dst_obj_type: str,
+        relation_type: str,
+        relation_props: dict = None
+):
+    match_str = f"MATCH(a:{src_obj_type}),(b:{dst_obj_type})" \
+                f"WHERE a.name = '{src_name}' AND b.name = '{dst_name}'" \
+                f"CREATE (a)-[:{relation_type} {json.dumps(relation_props)}]->(b);"
+    return _remove_excess_quotes(match_str)
