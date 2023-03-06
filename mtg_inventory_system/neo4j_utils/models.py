@@ -39,6 +39,13 @@ class TempCardNodeConnection(Model):
     def _passes_vote_percent_threshold(self):
         return (self.votes_for / self.total_votes) >= VOTES_THRESHOLD_PERCENT
 
+    def add_vote_for(self):
+        self.votes_for += 1
+        self.total_votes += 1
+
+    def add_vote_against(self):
+        self.total_votes += 1
+
     def can_make_permanent(self):
         return self._passes_vote_percent_threshold() and self._passes_vote_threshold()
 

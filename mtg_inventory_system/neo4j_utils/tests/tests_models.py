@@ -1,6 +1,13 @@
 from django.test import TestCase
 
+from ..models import *
+from common.models import Card
 
-class TestTemplate(TestCase):
-    def test_print(self):
-        self.assertTrue(True)
+
+class TestTempCardNodeConnection(TestCase):
+    def setUp(self) -> None:
+        pass
+
+    def test_add_vote_for(self):
+        pass
+
