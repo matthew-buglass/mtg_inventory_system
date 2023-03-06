@@ -18,7 +18,7 @@
       <sourceFolder url="file://$MODULE_DIR$/mtg_inventory_system/common/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/mtg_inventory_system/neo4j_utils/tests" isTestSource="true" />
     </content>
-    <orderEntry type="jdk" jdkName="Run Inventory System" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="MTG Inventroy Tests" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">

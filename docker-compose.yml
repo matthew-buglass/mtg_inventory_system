@@ -13,6 +13,19 @@ services:
     depends_on:
       - mtg-postgres
 
+  mtg-inventory-system-tests:
+    container_name: mtg-inventory-system-tests
+    build:
+      context: .
+      dockerfile: docker/inventory-system/Dockerfile
+    volumes:
+      - "./mtg_inventory_system/:/src/:delegated"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mtg-postgres
+    command: ["tail", "-f", "/dev/null"]
+
   mtg-postgres:
     container_name: mtg-postgres
     image: postgres:14.5-alpine

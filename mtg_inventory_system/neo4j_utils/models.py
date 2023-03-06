@@ -9,8 +9,8 @@ VOTES_THRESHOLD_PERCENT = 0.75
 
 
 class CardNodeConnection(Model):
-    src_card = ForeignKey(Card, on_delete=CASCADE)
-    dst_card = ForeignKey(Card, on_delete=CASCADE)
+    src_card = ForeignKey(Card, on_delete=CASCADE, related_name='src_card')
+    dst_card = ForeignKey(Card, on_delete=CASCADE, related_name='dst_card')
     connection_type = CharField(max_length=128, choices=NODE_CONNECTION_TYPES)
     connection_meta_data = JSONField(null=True)
 
@@ -26,8 +26,8 @@ class CardNodeConnection(Model):
 
 
 class TempCardNodeConnection(Model):
-    src_card = ForeignKey(Card, on_delete=CASCADE)
-    dst_card = ForeignKey(Card, on_delete=CASCADE)
+    src_card = ForeignKey(Card, on_delete=CASCADE, related_name='src_card_temp')
+    dst_card = ForeignKey(Card, on_delete=CASCADE, related_name='dst_card_temp')
     connection_type = CharField(max_length=128, choices=NODE_CONNECTION_TYPES)
     connection_meta_data = JSONField(null=True)
     votes_for = PositiveIntegerField(default=0)
