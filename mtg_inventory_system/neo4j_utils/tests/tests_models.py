@@ -1,7 +1,7 @@
 from django.test import TestCase
 
-from ..models import *
 from common.models import Card
+from neo4j_utils.models import CardNodeConnection, TempCardNodeConnection
 
 
 class TestTempCardNodeConnection(TestCase):
