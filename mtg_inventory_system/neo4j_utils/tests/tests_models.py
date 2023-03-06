@@ -1,13 +1,14 @@
 from django.test import TestCase
 
-from common.models import Card
+from common.factories import CardFactory
 from neo4j_utils.models import CardNodeConnection, TempCardNodeConnection
 
 
 class TestTempCardNodeConnection(TestCase):
     def setUp(self) -> None:
-        pass
+        self.src_card = CardFactory()
+        self.dst_card = CardFactory()
 
     def test_add_vote_for(self):
-        pass
+        self.assertEqual(self.src_card, self.dst_card)
 
