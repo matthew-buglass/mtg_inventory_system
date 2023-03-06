@@ -1,6 +1,3 @@
-from enum import Enum
-
-
 PRINTING_TYPE_OPTIONS = [
     ('NORMAL', 'normal'),
     ('FOIL', 'foil'),

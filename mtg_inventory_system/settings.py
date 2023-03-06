@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'mtg_inventory_system.urls'
+ROOT_URLCONF = 'urls'
 
 TEMPLATES = [
     {
