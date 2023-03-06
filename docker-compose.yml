@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: docker/inventory-system/Dockerfile
     volumes:
-      - "./src/mtg_inventory_system/:/src/:delegated"
+      - "./mtg_inventory_system/:/src/:delegated"
     ports:
       - "8000:8000"
     depends_on:
@@ -18,7 +18,7 @@ services:
     image: postgres:14.5-alpine
     restart: always
     env_file:
-      - ./src/mtg_inventory_system/mtg_inventory_system/.env
+      - mtg_inventory_system/mtg_inventory_system/.env
     ports:
       - "5432:5432"
 

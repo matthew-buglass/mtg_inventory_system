@@ -26,7 +26,7 @@ Any additionally changes made, not included in the original software do not have
 extended under any license
 """
 import pickle
-import src.card_image_detector.magic_card_detector as mcg
+import card_image_detector.magic_card_detector as mcg
 
 
 card_detector = mcg.MagicCardDetector()
