@@ -106,7 +106,7 @@ class Command(BaseCommand):
             CardFace.objects.bulk_create(card_faces_to_create, batch_size=batch_size)
         print(f"Time to create Card Faces: {t():.4f} secs")
 
-        if options.get('update_and_create'):
+        if options.get('update-and-create'):
             # bulk update card sets
             logger.info(f'Updating {len(set_ids_to_update):,} Card Sets in batches of {batch_size:,}')
             with timer() as t:
