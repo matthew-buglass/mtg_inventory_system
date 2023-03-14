@@ -4,7 +4,6 @@ from datetime import datetime
 import factory
 import uuid
 
-from common.const import CARD_LAYOUT_OPTIONS
 from common.models import Card, CardSet
 from faker import Factory
 
