@@ -1,8 +1,14 @@
+import logging
+
 from django.db.models import Q
 from django.shortcuts import render
 from django.views.generic import ListView
 
+from neo4j_utils.froms import CreateTempCardNodeConnectionForm
 from neo4j_utils.models import CardNodeConnection, TempCardNodeConnection
+
+
+logger = logging.getLogger(__name__)
 
 
 class ConnectionsListView(ListView):
@@ -37,8 +43,16 @@ class TempConnectionsListView(ListView):
         return result
 
 
-def propose_connection_view(req, src_card, dst_card):
-    pass
+def propose_connection_view(req):
+    if req.method == 'POST':
+        form = CreateTempCardNodeConnectionForm(req.POST)
+        if form.is_valid():
+            logger.info('form is valid')
+    else:
+        form = CreateTempCardNodeConnectionForm()
+
+    return render(req, 'forms/propose_connection.html', {'form': form})
+
 
 
 def propose_connection(req, src_card, dst_card, connection_type):

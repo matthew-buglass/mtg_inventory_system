@@ -1,0 +1,28 @@
+{% load static %}
+
+<p>You're at the page to propose a new card connection</p>
+<img src="{{ form.src_card.card_img }}" alt="{{ form.src_card.name }}">
+<img src="{{ form.dst_card.card_img }}" alt="{{ form.dst_card.name }}">
+<ol>
+    <li>Name: {{ form.src_card.name }} -> {{ form.dst_card.name }}</li>
+</ol>
+
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="row" style="content: ''; display: table; clear: both">
+        <div class="fieldWrapper" style="float: left; width: 40%">
+            {{ form.src_card.errors }}
+            {{ form.src_card }}
+        </div>
+         <div class="fieldWrapper" style="float: left; display: flex; justify-content: center">
+            {{ form.connection_type.errors }}
+            {{ form.connection_type }}
+        </div>
+         <div class="fieldWrapper" style="float: left; width: 40%">
+            {{ form.dst_card.errors }}
+            {{ form.dst_card }}
+        </div>
+    </div>
+    <input type="submit" value="Create">
+</form>
