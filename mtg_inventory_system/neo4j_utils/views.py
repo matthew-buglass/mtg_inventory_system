@@ -51,7 +51,7 @@ def propose_connection_view(req):
     else:
         form = CreateTempCardNodeConnectionForm()
 
-    return render(req, 'forms/propose_connection.html', {'form': form})
+    return render(req, 'forms/connection_view.html', {'form': form})
 
 
 
