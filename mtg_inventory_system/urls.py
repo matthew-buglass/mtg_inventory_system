@@ -19,5 +19,6 @@ from django.urls import include, path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('cards/', include('common.urls')),
+    path('connections/', include('neo4j_utils.urls')),
     path('', include('django.contrib.auth.urls')),
 ]

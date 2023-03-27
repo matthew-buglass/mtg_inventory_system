@@ -1,0 +1,23 @@
+<div>
+<form class="card_search" method="GET" action="" >
+    <input class="card_search" type="search" name="dst_search">
+    <button class="card_search" type="submit"> Search </button>
+</form>
+    {% for card in src_list %}
+        {% include "elements/card_summary.html" %}
+    {% endfor %}
+</div>
+
+<div>
+    connection types go here
+</div>
+
+<div>
+<form class="card_search" method="GET" action="" >
+    <input class="card_search" type="search" name="src_search">
+    <button class="card_search" type="submit"> Search </button>
+</form>
+    {% for card in src_list %}
+        {% include "elements/card_summary.html" %}
+    {% endfor %}
+</div>

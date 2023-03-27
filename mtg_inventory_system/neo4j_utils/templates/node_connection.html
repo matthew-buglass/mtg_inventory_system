@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% include "elements/search_bar.html" %}
+{% for connection in object_list %}
+    {% include "elements/card_summary.html" %}
+{% endfor %}
+
+{% include "elements/pagination_footer.html" %}
+
+{% endblock %}
