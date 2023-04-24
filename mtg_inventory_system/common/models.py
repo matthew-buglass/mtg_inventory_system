@@ -5,6 +5,7 @@ import logging
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Subquery, OuterRef
 
 from .const import CARD_LAYOUT_OPTIONS, PRINTING_TYPE_OPTIONS
 
@@ -56,6 +57,26 @@ class CardSet(models.Model):
         ]
 
 
+class CardQuerySet(models.QuerySet):
+
+    def get_cards_with_small_image_uri(self, **kwargs):
+        return self.filter(**kwargs).annotate(
+            card_img=Subquery(
+                CardFace.objects.filter(
+                    card__id=OuterRef('id'))
+                .distinct('card__id')
+                .values('small_img_uri'))
+        )
+
+
+class CardManager(models.Manager):
+    def get_queryset(self):
+        return CardQuerySet(self.model, using=self._db)
+
+    def get_cards_with_small_image_uri(self, **kwargs):
+        return self.get_queryset().get_cards_with_small_image_uri(**kwargs)
+
+
 class Card(models.Model):
     """Represents a unique card in Magic's printing
     """
@@ -76,6 +97,8 @@ class Card(models.Model):
 
     # Foreign Relations
     card_set = models.ForeignKey(CardSet, on_delete=models.DO_NOTHING)
+
+    objects = CardManager()
 
     def __str__(self):
         return f'{self.name} - {self.card_set.name}'

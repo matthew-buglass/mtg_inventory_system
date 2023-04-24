@@ -1,9 +1,10 @@
 import logging
 
-from django.db.models import Q
+from django.db.models import Q, Subquery, OuterRef
 from django.shortcuts import render
 from django.views.generic import ListView
 
+from common.models import Card, CardFace
 from neo4j_utils.froms import CreateTempCardNodeConnectionForm
 from neo4j_utils.models import CardNodeConnection, TempCardNodeConnection
 
@@ -43,6 +44,60 @@ class TempConnectionsListView(ListView):
         return result
 
 
+class PickSourceCardListView(ListView):
+    model = Card
+    template_name = 'connection_proposal/src_select.html'
+    paginate_by = 25
+
+    def get_queryset(self):
+        result = super(PickSourceCardListView, self)\
+            .get_queryset()\
+            .get_cards_with_small_image_uri()\
+            .order_by('name', 'card_set__name')\
+            .distinct('name')
+        query = self.request.GET.get('search')
+        if query:
+            post_result = result.filter(
+                Q(name__icontains=query) |
+                Q(cardface__type_line__icontains=query) |
+                Q(cardface__oracle_text__icontains=query))
+            result = post_result
+        return result
+
+
+class PickDestinationCardListView(ListView):
+    model = Card
+    template_name = 'connection_proposal/src_select.html'
+    paginate_by = 25
+
+    def get_queryset(self):
+        result = super(PickDestinationCardListView, self).get_queryset().exclude(pk=self.kwargs['pk'])\
+            .get_cards_with_small_image_uri()\
+            .exclude(pk=self.kwargs['pk'])\
+            .order_by('name', 'card_set__name')\
+            .distinct('name')
+        query = self.request.GET.get('search')
+        if query:
+            post_result = result.filter(
+                Q(name__icontains=query) |
+                Q(cardface__type_line__icontains=query) |
+                Q(cardface__oracle_text__icontains=query))
+            result = post_result
+        return result
+
+    def get_context_data(self, **kwargs):
+        result = super(PickDestinationCardListView, self).get_context_data(**kwargs)
+
+        # General Card Details
+        src_card = Card.objects.get_cards_with_small_image_uri(pk=self.kwargs['pk']).first()
+        result['src_card'] = {
+            'name': src_card.name,
+            'image_uri': src_card.card_img,
+        }
+
+        return result
+
+
 def propose_connection_view(req):
     if req.method == 'POST':
         form = CreateTempCardNodeConnectionForm(req.POST)
@@ -52,7 +107,6 @@ def propose_connection_view(req):
         form = CreateTempCardNodeConnectionForm()
 
     return render(req, 'forms/connection_view.html', {'form': form})
-
 
 
 def propose_connection(req, src_card, dst_card, connection_type):
