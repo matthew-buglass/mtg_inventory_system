@@ -1,0 +1,13 @@
+<ul>
+     <div class="card_row">
+          <div class="card_column">
+              <img src="{{ card.card_img }}" alt="{{ card.name }}">
+          </div>
+          <div class="card_column">
+              <p>Card Name: {{ card.name }}</p>
+              <li><a href={{ card.scryfall_url }}>Scryfall Link</a></li>
+              <li><a href="{% url 'create_connection' src_card.id card.id %}">Select as Triggered Card</a></li>
+          </div>
+        </div>
+        <hr>
+    </ul>

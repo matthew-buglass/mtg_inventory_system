@@ -2,7 +2,7 @@ import logging
 
 from django.db.models import Q, Subquery, OuterRef
 from django.shortcuts import render
-from django.views.generic import ListView
+from django.views.generic import ListView, FormView
 
 from common.models import Card, CardFace
 from neo4j_utils.froms import CreateTempCardNodeConnectionForm
@@ -67,7 +67,7 @@ class PickSourceCardListView(ListView):
 
 class PickDestinationCardListView(ListView):
     model = Card
-    template_name = 'connection_proposal/src_select.html'
+    template_name = 'connection_proposal/dst_select.html'
     paginate_by = 25
 
     def get_queryset(self):
@@ -90,12 +90,23 @@ class PickDestinationCardListView(ListView):
 
         # General Card Details
         src_card = Card.objects.get_cards_with_small_image_uri(pk=self.kwargs['pk']).first()
-        result['src_card'] = {
-            'name': src_card.name,
-            'image_uri': src_card.card_img,
-        }
+        result['src_card'] = src_card
 
         return result
+
+
+class ProposeConnectionFormView(FormView):
+    form_class = CreateTempCardNodeConnectionForm
+    template_name = 'forms/connection_view.html'
+    success_url = '/temp/'
+
+    def get_form(self, form_class=None):
+        form = super(ProposeConnectionFormView, self).get_form(form_class)
+        src_card = Card.objects.get_cards_with_small_image_uri(pk=self.kwargs['src_pk']).first()
+        dst_card = Card.objects.get_cards_with_small_image_uri(pk=self.kwargs['dst_pk']).first()
+        form.set_cards(src_card, dst_card)
+
+        return form
 
 
 def propose_connection_view(req):
