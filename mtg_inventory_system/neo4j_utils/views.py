@@ -1,6 +1,7 @@
 import logging
 
 from django.db.models import Q, Subquery, OuterRef
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import ListView, FormView
 
@@ -98,7 +99,7 @@ class PickDestinationCardListView(ListView):
 class ProposeConnectionFormView(FormView):
     form_class = CreateTempCardNodeConnectionForm
     template_name = 'forms/connection_view.html'
-    success_url = '/temp/'
+    success_url = '/connections/temp'
 
     def get_form(self, form_class=None):
         form = super(ProposeConnectionFormView, self).get_form(form_class)
@@ -107,6 +108,15 @@ class ProposeConnectionFormView(FormView):
         form.set_cards(src_card, dst_card)
 
         return form
+    
+    def form_valid(self, form):
+        new_connection = TempCardNodeConnection(
+            src_card=form.src_card,
+            dst_card=form.dst_card,
+            connection_type=form.cleaned_data['connection_type']
+        )
+        new_connection.save()
+        return HttpResponseRedirect(self.get_success_url())
 
 
 def propose_connection_view(req):

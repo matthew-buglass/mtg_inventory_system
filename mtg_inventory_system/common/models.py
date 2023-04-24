@@ -148,6 +148,15 @@ class Card(models.Model):
         args_dict = cls.get_raw_json_for_bulk_operations(card_json)
         return cls.objects.update_or_create(**args_dict)
 
+    def get_annotated_with_small_image(self):
+        return self.objects.filter(self).annotate(
+            card_img=Subquery(
+                CardFace.objects.filter(
+                    card__id=OuterRef('id'))
+                .distinct('card__id')
+                .values('small_img_uri'))
+        ).first()
+
 
 class CardFace(models.Model):
     """Sometimes MTG cards can have more than one face tied to it. This represents that data
