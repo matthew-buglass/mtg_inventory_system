@@ -6,6 +6,7 @@ from logging import getLogger
 
 from django.forms import model_to_dict
 
+from .models import CardNodeConnection
 from .utils import *
 from common.models import Card
 
@@ -16,6 +17,7 @@ class CypherSerializerBase:
     def __init__(
             self,
             model_class,
+            model_connection_class,
             create_node_fn=create_node_clause,
             create_relation_fn=create_relationship_clause,
             node_name_field='name',
@@ -27,6 +29,7 @@ class CypherSerializerBase:
         self.create_node_fn = create_node_fn
         self.create_relation_fn = create_relation_fn
         self.model_class = model_class
+        self.model_connection_class = model_connection_class
         self.fields = ['id'] + custom_fields
         self.node_name_field = node_name_field
         self.query_set = None
@@ -54,10 +57,13 @@ class CypherSerializerBase:
     #         props=fields
     #     )
 
-    def get_create_all_nodes_string(self):
+    def _get_create_nodes_strings(self, query_set=None):
         create_strings_list = []
-        if self.query_set:
-            for x in iter(self.query_set):
+        if not query_set:
+            query_set = self.query_set
+
+        if query_set:
+            for x in iter(query_set):
                 fields = model_to_dict(x, fields=self.fields)
                 create_strings_list.append(self.get_create_node_string(
                     node_name=str(model_to_dict(x)[self.node_name_field]).replace(' ', '_').lower(),
@@ -66,20 +72,25 @@ class CypherSerializerBase:
                 ))
 
         logger.info(f'Got create string for {len(create_strings_list)} {self.model_class.__name__} nodes')
-        return '\n'.join(create_strings_list)
+        return create_strings_list
 
-    def write_create_all_nodes_string_to_file(self, file_name):
+    @staticmethod
+    def _write_to_file(obj_type, file_name, cypher_list):
         if re.findall(r'\.cypher$', file_name):
             with open(file_name, 'w') as f:
-                f.write(self.get_create_all_nodes_string())
+                f.write('\n'.join(cypher_list))
                 f.close()
 
-            logger.info(f'Wrote create {self.model_class.__name__} nodes to cypher file {file_name}')
+            logger.info(f'Wrote create {obj_type} nodes to cypher file {file_name}')
         else:
             logger.error(f'No file writen, invalid file name `{file_name}`. Files must have a `.cypher` extension')
 
 
 class CardCypherSerializer(CypherSerializerBase):
     def __init__(self):
-        super(CardCypherSerializer, self).__init__(model_class=Card, custom_fields=['name', 'collector_number'])
+        super(CardCypherSerializer, self).__init__(
+            model_class=Card,
+            model_connection_class=CardNodeConnection,
+            custom_fields=['name', 'collector_number']
+        )
         self.query_set = Card.objects.all().order_by('name', 'released_at').distinct('name')
