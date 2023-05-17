@@ -3,6 +3,7 @@ import logging
 from django.db.models import Q, Subquery, OuterRef
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.views import View
 from django.views.generic import ListView, FormView
 
 from common.models import Card, CardFace
@@ -117,6 +118,10 @@ class ProposeConnectionFormView(FormView):
         )
         new_connection.save()
         return HttpResponseRedirect(self.get_success_url())
+
+
+class ExportCardConnectionsToCypherView(View):
+
 
 
 def propose_connection_view(req):
