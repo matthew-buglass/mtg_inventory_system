@@ -2,6 +2,22 @@
 
 {% block content %}
 
-<p>{{ object.dst_card.name }}</p>
+    {% with object=object.src_card %}
+        {% include 'elements/card_details.html'  %}
+    {% endwith %}
+
+    <h1>V</h1>
+    <h1>{{ object.connection_type }}</h1>
+    <h1>V</h1>
+
+    {% with object=object.dst_card %}
+        {% include 'elements/card_details.html'  %}
+    {% endwith %}
+
+    <h2>Votes</h2>
+    <p>Votes for: {{ object.votes_for }}</p>
+    <p>Votes against:  {{ votes_against }}</p>
+    <button type="submit" onclick="location.href='{% url 'cast_vote' object.id True %}'">Valid</button>
+    <button type="submit" onclick="location.href='{% url 'cast_vote' object.id False %}'">Invalid</button>
 
 {% endblock %}

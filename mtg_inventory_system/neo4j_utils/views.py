@@ -2,7 +2,7 @@ import logging
 
 from django.db.models import Q, Subquery, OuterRef
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView, FormView, DetailView
 
@@ -158,12 +158,20 @@ class VoteConnectionView(DetailView):
     model = TempCardNodeConnection
     template_name = 'vote_on_temp_node_connection.html'
 
+    def get_context_data(self, **kwargs):
+        result = super(VoteConnectionView, self).get_context_data(**kwargs)
+        obj = result['object']
+        result['votes_against'] = obj.total_votes - obj.votes_for
+
+        return result
+
 
 def insert_vote_on_connection(req, connection_id, connection_is_correct):
     conn = TempCardNodeConnection.objects.get(id=connection_id)
+    print(connection_id, connection_is_correct)
 
     # Add a vote for/against
-    if connection_is_correct:
+    if eval(connection_is_correct):
         conn.add_vote_for()
     else:
         conn.add_vote_against()
@@ -172,3 +180,5 @@ def insert_vote_on_connection(req, connection_id, connection_is_correct):
     if conn.can_make_permanent():
         conn.make_permanent()
         conn.delete()
+
+    return redirect('Vote on Connection', pk=connection_id)

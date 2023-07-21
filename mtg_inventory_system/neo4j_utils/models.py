@@ -42,9 +42,11 @@ class TempCardNodeConnection(Model):
     def add_vote_for(self):
         self.votes_for += 1
         self.total_votes += 1
+        self.save()
 
     def add_vote_against(self):
         self.total_votes += 1
+        self.save()
 
     def can_make_permanent(self):
         return self._passes_vote_percent_threshold() and self._passes_vote_threshold()
