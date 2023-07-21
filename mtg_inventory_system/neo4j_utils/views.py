@@ -1,6 +1,7 @@
 import logging
+import environ
 
-from django.db.models import Q, Subquery, OuterRef
+from django.db.models import Q, Subquery, OuterRef, QuerySet
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views import View
@@ -16,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class ConnectionsListView(ListView):
     model = CardNodeConnection
-    template_name = 'node_connection.html'
+    template_name = 'connection_list.html'
     paginate_by = 25
 
     def get_queryset(self):
@@ -32,7 +33,7 @@ class ConnectionsListView(ListView):
 
 class TempConnectionsListView(ListView):
     model = TempCardNodeConnection
-    template_name = 'node_connection.html'
+    template_name = 'connection_temp_list.html'
     paginate_by = 25
 
     def get_queryset(self):
@@ -120,12 +121,6 @@ class ProposeConnectionFormView(FormView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ExportCardConnectionsToCypherView(ListView):
-    model = CardNodeConnection
-    template_name = 'node_connection.html'
-    paginate_by = 25
-
-
 def propose_connection_view(req):
     if req.method == 'POST':
         form = CreateTempCardNodeConnectionForm(req.POST)
@@ -182,3 +177,16 @@ def insert_vote_on_connection(req, connection_id, connection_is_correct):
         conn.delete()
 
     return redirect('Vote on Connection', pk=connection_id)
+
+
+def export_connections_to_cypher(req, connection_set: QuerySet[CardNodeConnection]):
+    cypher_strings = [con.cypher_string() for con in connection_set]
+    env = environ.Env()
+    out_dir = env('CYPHER_OUTDIR')
+    filename = "connections.cypher"
+
+    with open(f'{out_dir}/{filename}', 'w') as f:
+        f.writelines(cypher_strings)
+        print(f'Output {len(cypher_strings)} cypher nodes to {out_dir}/{filename}')
+
+    return redirect('Card Connections')
