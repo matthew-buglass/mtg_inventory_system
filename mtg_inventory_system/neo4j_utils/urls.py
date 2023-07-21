@@ -10,5 +10,5 @@ urlpatterns = [
     path('temp/new/<slug:src_pk>/<slug:dst_pk>/', views.ProposeConnectionFormView.as_view(), name='create_connection'),
     path('temp/vote/<slug:pk>/', views.VoteConnectionView.as_view(), name='Vote on Connection'),
     path('temp/vote/<str:connection_id>/<str:connection_is_correct>/', views.insert_vote_on_connection, name='cast_vote'),
-    path('export', views.ExportCardConnectionsToCypherView.as_view(), name='Export Card Connections'),
+    path('export', views.export_connections_to_cypher, name='Export Card Connections'),
 ]

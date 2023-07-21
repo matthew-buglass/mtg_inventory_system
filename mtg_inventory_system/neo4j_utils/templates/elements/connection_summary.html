@@ -1,8 +1,13 @@
+{% load general %}
+
 <ul>
      <div class="card_row">
           <div class="card_column">
               <img src="{{ connection.src_card.card_img }}" alt="{{ connection.src_card.name }}">
               <img src="{{ connection.dst_card.card_img }}" alt="{{ connection.dst_card.name }}">
+              {% if connection|isinst:"neo4j_utils.models.TempCardNodeConnection" %}
+               <button type="submit" onclick="location.href='{% url 'Vote on Connection' connection.id %}'">Vote</button>
+              {% endif %}
           </div>
         </div>
         <hr>
