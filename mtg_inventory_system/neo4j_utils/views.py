@@ -4,7 +4,7 @@ from django.db.models import Q, Subquery, OuterRef
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
-from django.views.generic import ListView, FormView
+from django.views.generic import ListView, FormView, DetailView
 
 from common.models import Card, CardFace
 from neo4j_utils.froms import CreateTempCardNodeConnectionForm
@@ -120,8 +120,10 @@ class ProposeConnectionFormView(FormView):
         return HttpResponseRedirect(self.get_success_url())
 
 
-class ExportCardConnectionsToCypherView(View):
-
+class ExportCardConnectionsToCypherView(ListView):
+    model = CardNodeConnection
+    template_name = 'node_connection.html'
+    paginate_by = 25
 
 
 def propose_connection_view(req):
@@ -152,7 +154,12 @@ def propose_connection(req, src_card, dst_card, connection_type):
         new_conn.save()
 
 
-def vote_on_connection(req, connection_id, connection_is_correct):
+class VoteConnectionView(DetailView):
+    model = TempCardNodeConnection
+    template_name = 'vote_on_temp_node_connection.html'
+
+
+def insert_vote_on_connection(req, connection_id, connection_is_correct):
     conn = TempCardNodeConnection.objects.get(id=connection_id)
 
     # Add a vote for/against

@@ -180,7 +180,7 @@ def add_to_library_form(req, card_uuid):
             form.card = Card.objects.get(id=card_uuid)
             if form.is_valid():
                 form.add_to_library(req.user)
-                return HttpResponseRedirect('/cards/')
+                return HttpResponseRedirect('/')
         else:
             form = CreateCardOwnershipForm()
             form.card = Card.objects.get(id=card_uuid)
